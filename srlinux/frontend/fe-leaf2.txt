@@ -1,0 +1,303 @@
+A:admin@2tier-feleaf-02# info flat
+set / interface ethernet-1/1 description "edge link to 2tier-gpu-svr-01"
+set / interface ethernet-1/1 admin-state enable
+set / interface ethernet-1/1 vlan-tagging true
+set / interface ethernet-1/1 subinterface 1 admin-state enable
+set / interface ethernet-1/1 subinterface 1 ip-mtu 9200
+set / interface ethernet-1/1 subinterface 1 ipv6 admin-state enable
+set / interface ethernet-1/1 subinterface 1 ipv6 router-advertisement router-role admin-state enable
+set / interface ethernet-1/1 subinterface 1 ipv6 router-advertisement router-role max-advertisement-interval 10
+set / interface ethernet-1/1 subinterface 1 ipv6 router-advertisement router-role min-advertisement-interval 4
+set / interface ethernet-1/1 subinterface 1 vlan encap single-tagged vlan-id 1
+set / interface ethernet-1/2 description "edge link to 2tier-gpu-svr-02"
+set / interface ethernet-1/2 admin-state enable
+set / interface ethernet-1/3 description "edge link to 2tier-gpu-svr-01"
+set / interface ethernet-1/3 admin-state enable
+set / interface ethernet-1/4 description "edge link to 2tier-gpu-svr-02"
+set / interface ethernet-1/4 admin-state enable
+set / interface ethernet-1/5 description "edge link to b300-05"
+set / interface ethernet-1/5 admin-state enable
+set / interface ethernet-1/5 vlan-tagging true
+set / interface ethernet-1/5 subinterface 1 admin-state enable
+set / interface ethernet-1/5 subinterface 1 ip-mtu 9200
+set / interface ethernet-1/5 subinterface 1 ipv6 admin-state enable
+set / interface ethernet-1/5 subinterface 1 ipv6 router-advertisement router-role admin-state enable
+set / interface ethernet-1/5 subinterface 1 ipv6 router-advertisement router-role max-advertisement-interval 10
+set / interface ethernet-1/5 subinterface 1 ipv6 router-advertisement router-role min-advertisement-interval 4
+set / interface ethernet-1/5 subinterface 1 vlan encap single-tagged vlan-id 1
+set / interface ethernet-1/6 description "edge link to b300-06"
+set / interface ethernet-1/6 admin-state enable
+set / interface ethernet-1/6 vlan-tagging true
+set / interface ethernet-1/6 subinterface 1 admin-state enable
+set / interface ethernet-1/6 subinterface 1 ip-mtu 9200
+set / interface ethernet-1/6 subinterface 1 ipv6 admin-state enable
+set / interface ethernet-1/6 subinterface 1 ipv6 router-advertisement router-role admin-state enable
+set / interface ethernet-1/6 subinterface 1 ipv6 router-advertisement router-role max-advertisement-interval 10
+set / interface ethernet-1/6 subinterface 1 ipv6 router-advertisement router-role min-advertisement-interval 4
+set / interface ethernet-1/6 subinterface 1 vlan encap single-tagged vlan-id 1
+set / interface ethernet-1/6 subinterface 4096 type bridged
+set / interface ethernet-1/6 subinterface 4096 description vnet-vlan-0
+set / interface ethernet-1/6 subinterface 4096 admin-state enable
+set / interface ethernet-1/6 subinterface 4096 vlan encap untagged
+set / interface ethernet-1/31 description "interSwitch link to 2tier-fespine-01"
+set / interface ethernet-1/31 admin-state enable
+set / interface ethernet-1/31 subinterface 0 admin-state enable
+set / interface ethernet-1/31 subinterface 0 ip-mtu 9200
+set / interface ethernet-1/31 subinterface 0 ipv6 admin-state enable
+set / interface ethernet-1/31 subinterface 0 ipv6 router-advertisement router-role admin-state enable
+set / interface ethernet-1/31 subinterface 0 ipv6 router-advertisement router-role max-advertisement-interval 10
+set / interface ethernet-1/31 subinterface 0 ipv6 router-advertisement router-role min-advertisement-interval 4
+set / interface ethernet-1/32 description "interSwitch link to 2tier-fespine-01"
+set / interface ethernet-1/32 admin-state enable
+set / interface ethernet-1/32 subinterface 0 admin-state enable
+set / interface ethernet-1/32 subinterface 0 ip-mtu 9200
+set / interface ethernet-1/32 subinterface 0 ipv6 admin-state enable
+set / interface ethernet-1/32 subinterface 0 ipv6 router-advertisement router-role admin-state enable
+set / interface ethernet-1/32 subinterface 0 ipv6 router-advertisement router-role max-advertisement-interval 10
+set / interface ethernet-1/32 subinterface 0 ipv6 router-advertisement router-role min-advertisement-interval 4
+set / interface mgmt0 admin-state enable
+set / interface mgmt0 subinterface 0 admin-state enable
+set / interface mgmt0 subinterface 0 ipv4 admin-state enable
+set / interface mgmt0 subinterface 0 ipv4 address 10.13.20.3/24
+set / interface system0 subinterface 0 admin-state enable
+set / interface system0 subinterface 0 ipv4 admin-state enable
+set / interface system0 subinterface 0 ipv4 address 10.13.62.22/32
+set / system configuration role sudo
+set / system aaa authentication authentication-method [ local ]
+set / system aaa authentication admin-user password <password-hash>
+set / system aaa authentication admin-user ssh-key [ "<ssh-public-key>" "<ssh-public-key>" "<ssh-public-key>" ]
+set / system aaa authorization role sudo superuser true
+set / system aaa authorization role sudo services [ cli gnmi gnoi gnsi netconf ]
+set / system aaa server-group local type local
+set / system ssh-server mgmt admin-state enable
+set / system ssh-server mgmt network-instance mgmt
+set / system boot autoboot admin-state enable
+set / system lldp interface ethernet-1/1 admin-state enable
+set / system lldp interface ethernet-1/2 admin-state enable
+set / system lldp interface ethernet-1/3 admin-state enable
+set / system lldp interface ethernet-1/4 admin-state enable
+set / system lldp interface ethernet-1/5 admin-state enable
+set / system lldp interface ethernet-1/6 admin-state enable
+set / system lldp interface ethernet-1/31 admin-state enable
+set / system lldp interface ethernet-1/32 admin-state enable
+set / system name host-name 2tier-feleaf-02
+set / system grpc-server mgmt admin-state enable
+set / system grpc-server mgmt rate-limit 65535
+set / system grpc-server mgmt session-limit 1024
+set / system grpc-server mgmt metadata-authentication true
+set / system grpc-server mgmt tls-profile EDA
+set / system grpc-server mgmt network-instance mgmt
+set / system grpc-server mgmt port 57410
+set / system grpc-server mgmt services [ gnmi gnoi gnsi ]
+set / system grpc-server mgmt gnmi commit-save true
+set / system logging network-instance mgmt
+set / system logging remote-server 172.18.255.3 transport udp
+set / system logging remote-server 172.18.255.3 remote-port 1514
+set / system logging remote-server 172.18.255.3 facility local6 priority match-above informational
+set / network-instance default type default
+set / network-instance default admin-state enable
+set / network-instance default description "fabric: ai-frontend-fabric role: leaf"
+set / network-instance default router-id 10.13.62.22
+set / network-instance default ip-forwarding receive-ipv4-check false
+set / network-instance default interface ethernet-1/1.1
+set / network-instance default interface ethernet-1/31.0
+set / network-instance default interface ethernet-1/32.0
+set / network-instance default interface ethernet-1/5.1
+set / network-instance default interface ethernet-1/6.1
+set / network-instance default interface system0.0
+set / network-instance default protocols bgp admin-state enable
+set / network-instance default protocols bgp autonomous-system 4200000022
+set / network-instance default protocols bgp router-id 10.13.62.22
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/1.1 peer-group bgpgroup-frr-underlay
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/1.1 allowed-peer-as [ 4200000032 ]
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/5.1 peer-group bgpgroup-frr-underlay
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/5.1 allowed-peer-as [ 4200000031 ]
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/6.1 peer-group bgpgroup-frr-underlay
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/6.1 allowed-peer-as [ 4200000032 ]
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/31.0 peer-group bgpgroup-ebgp-ai-frontend-fabric
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/31.0 allowed-peer-as [ 4200000011 ]
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/32.0 peer-group bgpgroup-ebgp-ai-frontend-fabric
+set / network-instance default protocols bgp dynamic-neighbors interface ethernet-1/32.0 allowed-peer-as [ 4200000011 ]
+set / network-instance default protocols bgp ebgp-default-policy import-reject-all true
+set / network-instance default protocols bgp ebgp-default-policy export-reject-all true
+set / network-instance default protocols bgp afi-safi evpn admin-state enable
+set / network-instance default protocols bgp afi-safi evpn multipath allow-multiple-as true
+set / network-instance default protocols bgp afi-safi evpn multipath ebgp maximum-paths 64
+set / network-instance default protocols bgp afi-safi evpn multipath ibgp maximum-paths 64
+set / network-instance default protocols bgp afi-safi evpn evpn inter-as-vpn true
+set / network-instance default protocols bgp afi-safi evpn evpn rapid-update true
+set / network-instance default protocols bgp afi-safi ipv4-unicast admin-state enable
+set / network-instance default protocols bgp afi-safi ipv4-unicast multipath allow-multiple-as true
+set / network-instance default protocols bgp afi-safi ipv4-unicast multipath ebgp maximum-paths 4
+set / network-instance default protocols bgp afi-safi ipv4-unicast multipath ibgp maximum-paths 4
+set / network-instance default protocols bgp afi-safi ipv4-unicast ipv4-unicast advertise-ipv6-next-hops true
+set / network-instance default protocols bgp afi-safi ipv4-unicast ipv4-unicast receive-ipv6-next-hops true
+set / network-instance default protocols bgp afi-safi ipv4-unicast evpn rapid-update true
+set / network-instance default protocols bgp afi-safi ipv6-unicast admin-state enable
+set / network-instance default protocols bgp afi-safi ipv6-unicast multipath allow-multiple-as true
+set / network-instance default protocols bgp afi-safi ipv6-unicast multipath ebgp maximum-paths 4
+set / network-instance default protocols bgp afi-safi ipv6-unicast multipath ibgp maximum-paths 4
+set / network-instance default protocols bgp afi-safi ipv6-unicast evpn rapid-update true
+set / network-instance default protocols bgp preference ebgp 170
+set / network-instance default protocols bgp preference ibgp 170
+set / network-instance default protocols bgp route-advertisement rapid-withdrawal true
+set / network-instance default protocols bgp route-advertisement wait-for-fib-install false
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric admin-state enable
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric export-policy [ ebgp-isl-export-policy-ai-frontend-fabric ]
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric import-policy [ ebgp-isl-import-policy-ai-frontend-fabric ]
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric afi-safi evpn admin-state enable
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric afi-safi ipv4-unicast admin-state enable
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric afi-safi ipv4-unicast ipv4-unicast advertise-ipv6-next-hops true
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric afi-safi ipv4-unicast ipv4-unicast receive-ipv6-next-hops true
+set / network-instance default protocols bgp group bgpgroup-ebgp-ai-frontend-fabric afi-safi ipv6-unicast admin-state enable
+set / network-instance default protocols bgp group bgpgroup-frr-overlay admin-state enable
+set / network-instance default protocols bgp group bgpgroup-frr-overlay export-policy [ export-bgpgroup-frr-overlay ]
+set / network-instance default protocols bgp group bgpgroup-frr-overlay import-policy [ import-bgpgroup-frr-overlay ]
+set / network-instance default protocols bgp group bgpgroup-frr-overlay multihop admin-state enable
+set / network-instance default protocols bgp group bgpgroup-frr-overlay multihop maximum-hops 2
+set / network-instance default protocols bgp group bgpgroup-frr-overlay afi-safi evpn admin-state enable
+set / network-instance default protocols bgp group bgpgroup-frr-overlay afi-safi ipv4-unicast admin-state disable
+set / network-instance default protocols bgp group bgpgroup-frr-underlay admin-state enable
+set / network-instance default protocols bgp group bgpgroup-frr-underlay export-policy [ export-bgpgroup-frr-underlay ]
+set / network-instance default protocols bgp group bgpgroup-frr-underlay import-policy [ import-bgpgroup-frr-underlay ]
+set / network-instance default protocols bgp group bgpgroup-frr-underlay afi-safi ipv4-unicast admin-state enable
+set / network-instance default protocols bgp group bgpgroup-frr-underlay afi-safi ipv4-unicast ipv4-unicast advertise-ipv6-next-hops true
+set / network-instance default protocols bgp group bgpgroup-frr-underlay afi-safi ipv4-unicast ipv4-unicast receive-ipv6-next-hops true
+set / network-instance default protocols bgp group bgpgroup-frr-underlay afi-safi ipv6-unicast admin-state enable
+set / network-instance default protocols bgp neighbor 10.13.62.31 admin-state enable
+set / network-instance default protocols bgp neighbor 10.13.62.31 peer-as 4200000031
+set / network-instance default protocols bgp neighbor 10.13.62.31 peer-group bgpgroup-frr-overlay
+set / network-instance default protocols bgp neighbor 10.13.62.31 afi-safi ipv6-unicast admin-state disable
+set / network-instance default protocols bgp neighbor 10.13.62.31 transport local-address 10.13.62.22
+set / network-instance default protocols bgp neighbor 10.13.62.32 admin-state enable
+set / network-instance default protocols bgp neighbor 10.13.62.32 peer-as 4200000032
+set / network-instance default protocols bgp neighbor 10.13.62.32 peer-group bgpgroup-frr-overlay
+set / network-instance default protocols bgp neighbor 10.13.62.32 afi-safi ipv6-unicast admin-state disable
+set / network-instance default protocols bgp neighbor 10.13.62.32 transport local-address 10.13.62.22
+set / network-instance maas-vnet type mac-vrf
+set / network-instance maas-vnet admin-state enable
+set / network-instance maas-vnet description maas-vnet
+set / network-instance maas-vnet interface ethernet-1/6.4096
+set / network-instance maas-vnet vxlan-interface vxlan0.500
+set / network-instance maas-vnet protocols bgp-evpn bgp-instance 1 vxlan-interface vxlan0.500
+set / network-instance maas-vnet protocols bgp-evpn bgp-instance 1 evi 10200
+set / network-instance maas-vnet protocols bgp-evpn bgp-instance 1 ecmp 8
+set / network-instance maas-vnet protocols bgp-vpn bgp-instance 1 route-target export-rt target:4200030000:10200
+set / network-instance maas-vnet protocols bgp-vpn bgp-instance 1 route-target import-rt target:4200030000:10200
+set / network-instance maas-vnet bridge-table mac-learning admin-state enable
+set / network-instance maas-vnet bridge-table mac-learning aging admin-state enable
+set / network-instance maas-vnet bridge-table mac-learning aging age-time 300
+set / network-instance maas-vnet bridge-table mac-duplication admin-state enable
+set / network-instance maas-vnet bridge-table mac-duplication monitoring-window 3
+set / network-instance maas-vnet bridge-table mac-duplication num-moves 5
+set / network-instance maas-vnet bridge-table mac-duplication hold-down-time 9
+set / network-instance maas-vnet bridge-table mac-duplication action stop-learning
+set / network-instance maas-vnet bridge-table mac-limit maximum-entries 8192
+set / network-instance mgmt type ip-vrf
+set / network-instance mgmt admin-state enable
+set / network-instance mgmt description "Management network instance"
+set / network-instance mgmt interface mgmt0.0
+set / network-instance mgmt protocols linux import-routes true
+set / network-instance mgmt protocols linux export-routes true
+set / network-instance mgmt static-routes route 0.0.0.0/0 next-hop-group DEFAULT
+set / network-instance mgmt next-hop-groups group DEFAULT nexthop 0 ip-address 10.13.20.1
+set / routing-policy community-set no-export-fabric member [ no-export ]
+set / routing-policy prefix-set frr-underlay prefix 10.13.62.0/24 mask-length-range 32..32
+set / routing-policy prefix-set prefixset-ai-frontend-fabric prefix 10.13.62.0/24 mask-length-range 32..32
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric default-action policy-result reject
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 10 match protocol local
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 10 match prefix prefix-set prefixset-ai-frontend-fabric
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 10 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 10 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 15 match protocol bgp
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 15 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 15 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 20 match protocol aggregate
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 20 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 20 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 25 match bgp evpn route-type [ 1 ]
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 25 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 25 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 30 match bgp evpn route-type [ 2 ]
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 30 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 30 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 35 match bgp evpn route-type [ 3 ]
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 35 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 35 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 40 match bgp evpn route-type [ 4 ]
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 40 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 40 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 45 match bgp evpn route-type [ 5 ]
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 45 action policy-result accept
+set / routing-policy policy ebgp-isl-export-policy-ai-frontend-fabric statement 45 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric default-action policy-result reject
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 10 match protocol bgp
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 10 action policy-result accept
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 10 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 25 match bgp evpn route-type [ 1 ]
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 25 action policy-result accept
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 25 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 30 match bgp evpn route-type [ 2 ]
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 30 action policy-result accept
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 30 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 35 match bgp evpn route-type [ 3 ]
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 35 action policy-result accept
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 35 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 40 match bgp evpn route-type [ 4 ]
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 40 action policy-result accept
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 40 action bgp local-preference set 100
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 45 match bgp evpn route-type [ 5 ]
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 45 action policy-result accept
+set / routing-policy policy ebgp-isl-import-policy-ai-frontend-fabric statement 45 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-overlay default-action policy-result reject
+set / routing-policy policy export-bgpgroup-frr-overlay statement 25 match bgp evpn route-type [ 1 ]
+set / routing-policy policy export-bgpgroup-frr-overlay statement 25 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-overlay statement 25 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-overlay statement 30 match bgp evpn route-type [ 2 ]
+set / routing-policy policy export-bgpgroup-frr-overlay statement 30 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-overlay statement 30 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-overlay statement 35 match bgp evpn route-type [ 3 ]
+set / routing-policy policy export-bgpgroup-frr-overlay statement 35 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-overlay statement 35 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-overlay statement 40 match bgp evpn route-type [ 4 ]
+set / routing-policy policy export-bgpgroup-frr-overlay statement 40 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-overlay statement 40 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-overlay statement 45 match bgp evpn route-type [ 5 ]
+set / routing-policy policy export-bgpgroup-frr-overlay statement 45 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-overlay statement 45 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-underlay default-action policy-result reject
+set / routing-policy policy export-bgpgroup-frr-underlay statement 5 action bgp communities add no-export-fabric
+set / routing-policy policy export-bgpgroup-frr-underlay statement 5 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-underlay statement 10 match protocol local
+set / routing-policy policy export-bgpgroup-frr-underlay statement 10 match prefix prefix-set frr-underlay
+set / routing-policy policy export-bgpgroup-frr-underlay statement 10 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-underlay statement 10 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-underlay statement 15 match protocol bgp
+set / routing-policy policy export-bgpgroup-frr-underlay statement 15 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-underlay statement 15 action bgp local-preference set 100
+set / routing-policy policy export-bgpgroup-frr-underlay statement 20 match protocol aggregate
+set / routing-policy policy export-bgpgroup-frr-underlay statement 20 action policy-result accept
+set / routing-policy policy export-bgpgroup-frr-underlay statement 20 action bgp local-preference set 100
+set / routing-policy policy import-bgpgroup-frr-overlay default-action policy-result reject
+set / routing-policy policy import-bgpgroup-frr-overlay statement 25 match bgp evpn route-type [ 1 ]
+set / routing-policy policy import-bgpgroup-frr-overlay statement 25 action policy-result accept
+set / routing-policy policy import-bgpgroup-frr-overlay statement 25 action bgp local-preference set 100
+set / routing-policy policy import-bgpgroup-frr-overlay statement 30 match bgp evpn route-type [ 2 ]
+set / routing-policy policy import-bgpgroup-frr-overlay statement 30 action policy-result accept
+set / routing-policy policy import-bgpgroup-frr-overlay statement 30 action bgp local-preference set 100
+set / routing-policy policy import-bgpgroup-frr-overlay statement 35 match bgp evpn route-type [ 3 ]
+set / routing-policy policy import-bgpgroup-frr-overlay statement 35 action policy-result accept
+set / routing-policy policy import-bgpgroup-frr-overlay statement 35 action bgp local-preference set 100
+set / routing-policy policy import-bgpgroup-frr-overlay statement 40 match bgp evpn route-type [ 4 ]
+set / routing-policy policy import-bgpgroup-frr-overlay statement 40 action policy-result accept
+set / routing-policy policy import-bgpgroup-frr-overlay statement 40 action bgp local-preference set 100
+set / routing-policy policy import-bgpgroup-frr-overlay statement 45 match bgp evpn route-type [ 5 ]
+set / routing-policy policy import-bgpgroup-frr-overlay statement 45 action policy-result accept
+set / routing-policy policy import-bgpgroup-frr-overlay statement 45 action bgp local-preference set 100
+set / routing-policy policy import-bgpgroup-frr-underlay default-action policy-result reject
+set / routing-policy policy import-bgpgroup-frr-underlay statement 10 match protocol bgp
+set / routing-policy policy import-bgpgroup-frr-underlay statement 10 action policy-result accept
+set / routing-policy policy import-bgpgroup-frr-underlay statement 10 action bgp local-preference set 100
+set / tunnel-interface vxlan0 vxlan-interface 500 type bridged
+set / tunnel-interface vxlan0 vxlan-interface 500 ingress vni 10200
+set / tunnel-interface vxlan0 vxlan-interface 500 egress source-ip use-system-ipv4-address

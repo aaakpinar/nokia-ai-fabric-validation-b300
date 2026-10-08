@@ -1,0 +1,322 @@
+## B300-5
+!
+frr version 10.1.3_git
+frr defaults traditional
+hostname b300-05-f3
+log file /var/log/frr.log
+log record-priority
+log timestamp precision 3
+log commands
+no ipv6 forwarding
+!
+ip prefix-list ACCEPT-DEFAULT seq 10 permit 10.13.62.0/24 ge 32 le 32
+ip prefix-list EXPORT-ONLY-LOOPBACKS seq 5 permit 0.0.0.0/0 ge 32 le 32
+!
+debug zebra kernel
+debug zebra evpn mh mac
+debug bgp neighbor-events
+debug bgp update-groups
+debug bgp updates in
+debug bgp updates out
+debug bgp zebra
+debug bgp evpn mh route
+!
+vrf vrf-mgmt
+ vni 30003
+exit-vrf
+!
+vrf vrf-internet
+ vni 30001
+exit-vrf
+!
+vrf vrf-private
+ vni 30002
+exit-vrf
+!
+vrf vrf-storage
+ vni 30005
+exit-vrf
+!
+router bgp 4200000031 vrf vrf-mgmt
+ !
+ address-family ipv4 unicast
+  network 10.13.51.21/32 route-map EXPORT-ONLY-LOOPBACKS
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:30003
+  route-target export 4200030000:30003
+ exit-address-family
+exit
+!
+router bgp 4200000031 vrf vrf-internet
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:20363
+  route-target import 4200030000:20365
+  route-target import 4200030000:20366
+  route-target import 4200030000:20367
+  route-target import 4200030000:30001
+  route-target export 4200030000:20363
+  route-target export 4200030000:20365
+  route-target export 4200030000:20366
+  route-target export 4200030000:20367
+  route-target export 4200030000:30001
+ exit-address-family
+exit
+!
+router bgp 4200000031 vrf vrf-private
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:20362
+  route-target import 4200030000:30002
+  route-target export 4200030000:20362
+  route-target export 4200030000:30002
+ exit-address-family
+exit
+!
+router bgp 4200000031 vrf vrf-storage
+ !
+ address-family ipv4 unicast
+  network 10.13.59.21/32 route-map EXPORT-ONLY-LOOPBACKS
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:30005
+  route-target export 4200030000:30005
+ exit-address-family
+exit
+!
+router bgp 4200000031
+ bgp router-id 10.13.51.21
+ bgp bestpath as-path multipath-relax
+ neighbor LEAVES peer-group
+ neighbor OVERLAY peer-group
+ neighbor OVERLAY ebgp-multihop 2
+ neighbor OVERLAY update-source 10.13.62.31
+ neighbor ens16f0np0 interface peer-group LEAVES
+ neighbor ens16f0np0 remote-as 4200000021
+ neighbor ens16f0np0 description 2tier-feleaf-01
+ neighbor ens16f1np1 interface peer-group LEAVES
+ neighbor ens16f1np1 remote-as 4200000022
+ neighbor ens16f1np1 description 2tier-feleaf-02
+ neighbor 10.13.62.21 remote-as 4200000021
+ neighbor 10.13.62.21 peer-group OVERLAY
+ neighbor 10.13.62.21 description 2tier-feleaf-01
+ neighbor 10.13.62.22 remote-as 4200000022
+ neighbor 10.13.62.22 peer-group OVERLAY
+ neighbor 10.13.62.22 description 2tier-feleaf-02
+ !
+ address-family ipv4 unicast
+  network 10.13.52.21/32
+  network 10.13.62.31/32
+  neighbor LEAVES soft-reconfiguration inbound
+  neighbor LEAVES route-map IMPORT-DEFAULT in
+  neighbor LEAVES route-map EXPORT-ONLY-LOOPBACKS out
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  neighbor OVERLAY activate
+  neighbor OVERLAY soft-reconfiguration inbound
+  neighbor OVERLAY route-map OPENSTACK-VNI-IN in
+  neighbor OVERLAY route-map OPENSTACK-VNI-OUT out
+  advertise-all-vni
+ exit-address-family
+exit
+!
+bgp as-path access-list LOCAL-ONLY seq 10 permit ^$
+!
+bgp extcommunity-list expanded OPENSTACK-VNI seq 1 permit .*:30003
+bgp extcommunity-list expanded OPENSTACK-VNI seq 3 permit .*:30001
+bgp extcommunity-list expanded OPENSTACK-VNI seq 4 permit .*:30002
+bgp extcommunity-list expanded OPENSTACK-VNI seq 5 permit .*:30005
+bgp extcommunity-list expanded OPENSTACK-VNI seq 20 permit .*:20363
+bgp extcommunity-list expanded OPENSTACK-VNI seq 21 permit .*:20365
+bgp extcommunity-list expanded OPENSTACK-VNI seq 22 permit .*:20366
+bgp extcommunity-list expanded OPENSTACK-VNI seq 23 permit .*:20367
+bgp extcommunity-list expanded OPENSTACK-VNI seq 24 permit .*:20362
+!
+route-map OPENSTACK-VNI-OUT permit 10
+ match as-path LOCAL-ONLY
+ match extcommunity OPENSTACK-VNI
+exit
+!
+route-map OPENSTACK-VNI-IN permit 10
+ match extcommunity OPENSTACK-VNI
+exit
+!
+route-map IMPORT-DEFAULT permit 10
+ match ip address prefix-list ACCEPT-DEFAULT
+exit
+!
+route-map EXPORT-ONLY-LOOPBACKS permit 10
+ match ip address prefix-list EXPORT-ONLY-LOOPBACKS
+exit
+!
+End
+
+## B300-6
+!
+frr version 10.1.3_git
+frr defaults traditional
+hostname b300-06-f3
+log file /var/log/frr.log
+log record-priority
+log timestamp precision 3
+log commands
+no ipv6 forwarding
+!
+ip prefix-list ACCEPT-DEFAULT seq 10 permit 10.13.62.0/24 ge 32 le 32
+ip prefix-list EXPORT-ONLY-LOOPBACKS seq 5 permit 0.0.0.0/0 ge 32 le 32
+!
+debug zebra kernel
+debug zebra evpn mh mac
+debug bgp neighbor-events
+debug bgp update-groups
+debug bgp updates in
+debug bgp updates out
+debug bgp zebra
+debug bgp evpn mh route
+!
+vrf vrf-mgmt
+ vni 30003
+exit-vrf
+!
+vrf vrf-internet
+ vni 30001
+exit-vrf
+!
+vrf vrf-private
+ vni 30002
+exit-vrf
+!
+vrf vrf-storage
+ vni 30005
+exit-vrf
+!
+router bgp 4200000032 vrf vrf-mgmt
+ !
+ address-family ipv4 unicast
+  network 10.13.51.22/32 route-map EXPORT-ONLY-LOOPBACKS
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:30003
+  route-target export 4200030000:30003
+ exit-address-family
+exit
+!
+router bgp 4200000032 vrf vrf-internet
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:20363
+  route-target import 4200030000:20365
+  route-target import 4200030000:20366
+  route-target import 4200030000:20367
+  route-target import 4200030000:30001
+  route-target export 4200030000:20363
+  route-target export 4200030000:20365
+  route-target export 4200030000:20366
+  route-target export 4200030000:20367
+  route-target export 4200030000:30001
+ exit-address-family
+exit
+!
+router bgp 4200000032 vrf vrf-private
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:20362
+  route-target import 4200030000:30002
+  route-target export 4200030000:20362
+  route-target export 4200030000:30002
+ exit-address-family
+exit
+!
+router bgp 4200000032 vrf vrf-storage
+ !
+ address-family ipv4 unicast
+  network 10.13.59.22/32 route-map EXPORT-ONLY-LOOPBACKS
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import 4200030000:30005
+  route-target export 4200030000:30005
+ exit-address-family
+exit
+!
+router bgp 4200000032
+ bgp router-id 10.13.51.22
+ bgp bestpath as-path multipath-relax
+ neighbor LEAVES peer-group
+ neighbor OVERLAY peer-group
+ neighbor OVERLAY ebgp-multihop 2
+ neighbor OVERLAY update-source 10.13.62.32
+ neighbor ens16f0np0 interface peer-group LEAVES
+ neighbor ens16f0np0 remote-as 4200000022
+ neighbor ens16f0np0 description 2tier-feleaf-02
+ neighbor ens16f1np1 interface peer-group LEAVES
+ neighbor ens16f1np1 remote-as 4200000021
+ neighbor ens16f1np1 description 2tier-feleaf-01
+ neighbor 10.13.62.21 remote-as 4200000021
+ neighbor 10.13.62.21 peer-group OVERLAY
+ neighbor 10.13.62.21 description 2tier-feleaf-01
+ neighbor 10.13.62.22 remote-as 4200000022
+ neighbor 10.13.62.22 peer-group OVERLAY
+ neighbor 10.13.62.22 description 2tier-feleaf-02
+ !
+ address-family ipv4 unicast
+  network 10.13.52.22/32
+  network 10.13.62.32/32
+  neighbor LEAVES soft-reconfiguration inbound
+  neighbor LEAVES route-map IMPORT-DEFAULT in
+  neighbor LEAVES route-map EXPORT-ONLY-LOOPBACKS out
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  neighbor OVERLAY activate
+  neighbor OVERLAY soft-reconfiguration inbound
+  neighbor OVERLAY route-map OPENSTACK-VNI-IN in
+  neighbor OVERLAY route-map OPENSTACK-VNI-OUT out
+  advertise-all-vni
+ exit-address-family
+exit
+!
+bgp as-path access-list LOCAL-ONLY seq 10 permit ^$
+!
+bgp extcommunity-list expanded OPENSTACK-VNI seq 1 permit .*:30003
+bgp extcommunity-list expanded OPENSTACK-VNI seq 3 permit .*:30001
+bgp extcommunity-list expanded OPENSTACK-VNI seq 4 permit .*:30002
+bgp extcommunity-list expanded OPENSTACK-VNI seq 5 permit .*:30005
+bgp extcommunity-list expanded OPENSTACK-VNI seq 20 permit .*:20363
+bgp extcommunity-list expanded OPENSTACK-VNI seq 21 permit .*:20365
+bgp extcommunity-list expanded OPENSTACK-VNI seq 22 permit .*:20366
+bgp extcommunity-list expanded OPENSTACK-VNI seq 23 permit .*:20367
+bgp extcommunity-list expanded OPENSTACK-VNI seq 24 permit .*:20362
+!
+route-map OPENSTACK-VNI-OUT permit 10
+ match as-path LOCAL-ONLY
+ match extcommunity OPENSTACK-VNI
+exit
+!
+route-map OPENSTACK-VNI-IN permit 10
+ match extcommunity OPENSTACK-VNI
+exit
+!
+route-map IMPORT-DEFAULT permit 10
+ match ip address prefix-list ACCEPT-DEFAULT
+exit
+!
+route-map EXPORT-ONLY-LOOPBACKS permit 10
+ match ip address prefix-list EXPORT-ONLY-LOOPBACKS
+exit
+!
+End
+

@@ -1,0 +1,1122 @@
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  labels:
+    eda.nokia.com/bootstrap: 'true'
+  name: leafindex-pool
+  namespace: ai-fabric-be
+spec:
+  publishAllocations: true
+  segments:
+    - allocations:
+        - name: 2tier-beleaf-01
+          value: 1
+        - name: 2tier-beleaf-02
+          value: 2
+      reservations: []
+      size: 10
+      start: 1
+--- 
+apiVersion: core.eda.nokia.com/v1
+kind: IPAllocationPool
+metadata:
+  name: system0-leaf
+  namespace: ai-fabric-be
+spec:
+  segments:
+    - allocations:
+        - name: stripe01-leaf-2tier-beleaf-01
+          value: 192.168.1.1
+        - name: stripe01-leaf-2tier-beleaf-02
+          value: 192.168.1.2
+      reservations: []
+      subnet: 192.168.1.0/24
+--- 
+apiVersion: core.eda.nokia.com/v1
+kind: IPAllocationPool
+metadata:
+  name: system0-spine
+  namespace: ai-fabric-be
+spec:
+  segments:
+    - allocations:
+        - name: stripeconn01-spine-2tier-bespine-01
+          value: 192.168.2.1
+      reservations: []
+      subnet: 192.168.2.0/24
+--- 
+apiVersion: aifabrics.eda.nokia.com/v1alpha1
+kind: Backend
+metadata:
+  name: ai-backend-fabric
+  namespace: ai-fabric-be
+spec:
+  asnPool: asn-pool
+  gpuIsolationGroups:
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster1
+      name: islgrp1
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster2
+      name: islgrp2
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster3
+      name: islgrp3
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster4
+      name: islgrp4
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster5
+      name: islgrp5
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster6
+      name: islgrp6
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster7
+      name: islgrp7
+    - interfaceSelector:
+        - eda.nokia.com/tenant=gpucluster8
+      name: islgrp8
+  rocev2QoS:
+    ecnMaxDropProbabilityPercent: 100
+    ecnSlopeMaxThresholdPercent: 80
+    ecnSlopeMinThresholdPercent: 30
+    pfcDeadlockDetectionTimer: 750
+    pfcDeadlockRecoveryTimer: 750
+    queueMaximumBurstSize: 52110640
+  stripeConnector:
+    asnPool: asn-pool-spine
+    linkSelector:
+      - eda.nokia.com/role=interSwitchBE
+    name: stripeconn01
+    nodeSelector:
+      - eda.nokia.com/stripeconn-id=stripeconn01
+    systemPoolIPV4: system0-spine
+  stripes:
+    - asnPool: asn-pool-leaf
+      gpuVlan: 1
+      name: stripe01
+      nodeSelector:
+        - eda.nokia.com/stripe-id=stripe1
+      stripeID: 1
+      systemPoolIPV4: system0-leaf
+--- 
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: dac-link-training-leaf
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/33"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/34"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/35"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/36"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/37"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/38"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/39"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/40"}.ethernet
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-02
+  - 2tier-beleaf-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: dac-link-training-spine
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/1"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/2"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/3"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/4"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/5"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/6"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/7"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/8"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/33"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/34"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/35"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/36"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/37"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/38"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/39"}.ethernet
+  - config: |
+      {
+        "dac-link-training": true
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/40"}.ethernet
+  endpoints:
+  - 2tier-bespine-01
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-bespine-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: interfaces
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/1/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/1/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/2/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/2/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/3/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/3/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/4/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/4/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/5/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/5/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/6/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/6/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/7/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/7/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/8/1"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  - config: |
+      {
+        "learn-unsolicited": "both",
+        "host-route": {
+          "populate": [
+            {
+              "route-type": "dynamic",
+              "datapath-programming": true
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/8/2"}.subinterface{.index==1}.ipv6.neighbor-discovery
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-02
+  - 2tier-beleaf-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: interfaces-mtu
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/1/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/1/2"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/2/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/2/2"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/3/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/3/2"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/4/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/4/2"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/5/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/5/2"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/6/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/6/2"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/7/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/7/2"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/8/1"}.subinterface{.index==1}
+  - config: |
+      {
+        "ip-mtu": 9194
+      }
+    operation: Create
+    path: .interface{.name=="ethernet-1/8/2"}.subinterface{.index==1}
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-02
+  - 2tier-beleaf-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: ip-load-balance-network-instance
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |2
+        {
+          "ip-load-balancing": {
+            "dynamic-load-balancing": {
+              "prefix": [
+                {
+                  "ip-prefix": "::/0"
+                }
+              ]
+            }
+          }
+        }
+    operation: Create
+    path: .network-instance{.name=="default"}
+  endpoints:
+  - 2tier-bespine-01
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-bespine-01
+  - 2tier-beleaf-02
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: ip-load-balance-network-instance-leaf
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |2
+        {
+          "ip-load-balancing": {
+            "dynamic-load-balancing": {
+              "prefix": [
+                {
+                  "ip-prefix": "::/0"
+                }
+              ]
+            }
+          }
+        }
+    operation: Create
+    path: .network-instance{.name=="islgrp1"}
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-02
+  - 2tier-beleaf-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: ip-mtu
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "default-ip-mtu": 9194
+      }
+    operation: Create
+    path: .system.mtu
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  - 2tier-bespine-01
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  - 2tier-bespine-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: max-path
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "allow-multiple-as": true,
+        "ebgp": {
+          "maximum-paths": 8
+        },
+        "ibgp": {
+          "maximum-paths": 8
+        }
+      }
+    operation: Create
+    path: .network-instance{.name=="default"}.protocols.bgp.afi-safi{.afi-safi-name=="ipv4-unicast"}.multipath
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-02
+  - 2tier-beleaf-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: max-path-v6
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "allow-multiple-as": true,
+        "ebgp": {
+          "maximum-paths": 8
+        },
+        "ibgp": {
+          "maximum-paths": 8
+        }
+      }
+    operation: Create
+    path: .network-instance{.name=="default"}.protocols.bgp.afi-safi{.afi-safi-name=="ipv6-unicast"}.multipath
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-02
+  - 2tier-beleaf-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: mgmt-route
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "static-routes": {
+          "route": [
+            {
+              "prefix": "0.0.0.0/0",
+              "next-hop-group": "DEFAULT"
+            }
+          ]
+        },
+        "next-hop-groups": {
+          "group": [
+            {
+              "name": "DEFAULT",
+              "nexthop": [
+                {
+                  "index": 0,
+                  "ip-address": "10.13.20.1"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    operation: Create
+    path: .network-instance{.name=="mgmt"}
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  - 2tier-bespine-01
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  - 2tier-bespine-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: policy-leaf01-single-tenant
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "name": "20",
+        "match": {
+          "protocol": "arp-nd"
+        },
+        "action": {
+          "policy-result": "accept"
+        }
+      }
+    operation: Create
+    path: .routing-policy.policy{.name=="export-routeleak-islgrp1-ai-backend-fabric"}.statement{.name=="20"}
+  endpoints:
+  - 2tier-beleaf-01
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: policy-leaf02-single-tenant
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: |
+      {
+        "name": "20",
+        "match": {
+          "protocol": "arp-nd"
+        },
+        "action": {
+          "policy-result": "accept"
+        }
+      }
+    operation: Create
+    path: .routing-policy.policy{.name=="export-routeleak-islgrp1-ai-backend-fabric"}.statement{.name=="20"}
+  endpoints:
+  - 2tier-beleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.10.1
+status:
+  endpoints:
+  - 2tier-beleaf-02
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: qos-enable-ecn-slope
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: " { \r\n \"wred-slope\": [\r\n { \r\n\"traffic-type\": \"all\",\r\n\"drop-probability\":
+      \"all\",\r\n\"enable-ecn\": true,\r\n\"min-threshold-percent\": 30,\r\n\"max-threshold-percent\":
+      85,\r\n\"slope-enabled\": true,\r\n\"max-drop-probability-percent\": 100\r\n}
+      \r\n] \r\n }"
+    operation: Update
+    path: .qos.buffer-management.queue-management-profile{.name=="egress-backend-ai-backend-fabric-2"}.wred
+  endpointSelector:
+  - eda.nokia.com/role=leaf
+  - eda.nokia.com/role=spine
+  priority: 100
+status:
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  - 2tier-bespine-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: qos-mbs-q0
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: "{ \r\n  \"queue\": [ \r\n  { \r\n  \"queue-name\": \"unicast-0\", \r\n
+      \ \"maximum-burst-size\": 5211064 \r\n  } \r\n  ] \r\n} "
+    operation: Update
+    path: .qos.buffer-management.buffer-allocation-profile{.name=="egress-backend-ai-backend-fabric"}.queues
+  endpointSelector:
+  - eda.nokia.com/role=leaf
+  - eda.nokia.com/role=spine
+  operatingSystem: srl
+  priority: 100
+status:
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  - 2tier-bespine-01
+---
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: qos-pfc-headroom
+  namespace: ai-fabric-be
+spec:
+  configs:
+  - config: "{ \r\n \"pfc-buffer-reservation\": 10 \r\n }"
+    operation: Update
+    path: .qos.linecard{.slot==1}.forwarding-complex{.name=="0"}.input
+  endpointSelector:
+  - eda.nokia.com/role=leaf
+  - eda.nokia.com/role=spine
+  priority: 100
+status:
+  endpoints:
+  - 2tier-beleaf-01
+  - 2tier-beleaf-02
+  - 2tier-bespine-01
+--- 
+apiVersion: qos.eda.nokia.com/v1
+kind: ForwardingClass
+metadata:
+  name: fc0
+  namespace: ai-fabric-be
+spec: {}
+--- 
+apiVersion: qos.eda.nokia.com/v1
+kind: ForwardingClass
+metadata:
+  name: fc3
+  namespace: ai-fabric-be
+spec: {}
+--- 
+apiVersion: qos.eda.nokia.com/v1
+kind: ForwardingClass
+metadata:
+  name: fc6
+  namespace: ai-fabric-be
+spec: {}
+--- 
+apiVersion: qos.eda.nokia.com/v1
+kind: PolicyDeployment
+metadata:
+  name: policy-deployment-edge
+  namespace: ai-fabric-be
+spec:
+  egressPolicy: egress-backend-ai-backend-fabric
+  ingressPolicy: ingress-backend-ai-backend-fabric
+  interfaceSelector:
+    - eda.nokia.com/role=edge
+---
+apiVersion: qos.eda.nokia.com/v1
+kind: Queue
+metadata:
+  name: pfc-3
+  namespace: ai-fabric-be
+spec:
+  queueID: 3
+  queueType: Pfc
+  trafficType: Unicast
+---
+apiVersion: qos.eda.nokia.com/v1
+kind: Queue
+metadata:
+  name: pfc-6
+  namespace: ai-fabric-be
+spec:
+  queueID: 6
+  queueType: Pfc
+  trafficType: Unicast
+--- 
+apiVersion: qos.eda.nokia.com/v1
+kind: Queue
+metadata:
+  name: unicast-0
+  namespace: ai-fabric-be
+spec:
+  queueID: 0
+  queueType: Normal
+  trafficType: Unicast
+--- 
+apiVersion: qos.eda.nokia.com/v1
+kind: Queue
+metadata:
+  name: unicast-3
+  namespace: ai-fabric-be
+spec:
+  queueID: 3
+  queueType: Normal
+  trafficType: Unicast
+--- 
+apiVersion: qos.eda.nokia.com/v1
+kind: Queue
+metadata:
+  name: unicast-6
+  namespace: ai-fabric-be
+spec:
+  queueID: 6
+  queueType: Normal
+  trafficType: Unicast
+--- 
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Breakout
+metadata:
+  name: breakout-2x400g
+  namespace: ai-fabric-be
+spec:
+  channels: 2
+  interface:
+    - ethernet-1-1
+    - ethernet-1-2
+    - ethernet-1-3
+    - ethernet-1-4
+    - ethernet-1-5
+    - ethernet-1-6
+    - ethernet-1-7
+    - ethernet-1-8
+  node:
+    - 2tier-beleaf-01
+    - 2tier-beleaf-02
+  speed: 400G
+--- 
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/tenant: gpucluster1
+  name: 2tier-beleaf-01-ethernet-1-1-1
+  namespace: ai-fabric-be
+spec:
+  description: edge link to 2tier-gpu-svr-01
+  enabled: true
+  encapType: dot1q
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1-1
+      lacpPortPriority: 32768
+      node: 2tier-beleaf-01
+  type: interface
+--- 
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    eda.nokia.com/role: interSwitch
+  name: 2tier-beleaf-01-ethernet-1-33
+  namespace: ai-fabric-be
+spec:
+  description: interSwitch link to 2tier-bespine-01
+  enabled: true
+  encapType: 'null'
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: false
+  members:
+    - enabled: true
+      interface: ethernet-1-33
+      lacpPortPriority: 32768
+      node: 2tier-beleaf-01
+  type: interface
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: 2tier-beleaf-01-e1-1-1-2tier-gpu-svr-01-eth1
+  namespace: ai-fabric-be
+spec:
+  links:
+    - local:
+        interface: ethernet-1-1-1
+        interfaceResource: 2tier-beleaf-01-ethernet-1-1-1
+        node: 2tier-beleaf-01
+      remote:
+        interface: eth1
+        interfaceResource: 2tier-gpu-svr-01-eth1
+        node: 2tier-gpu-svr-01
+      type: edge

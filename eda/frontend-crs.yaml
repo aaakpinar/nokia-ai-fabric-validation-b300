@@ -1,0 +1,521 @@
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: 2tier-feleaf-01-ethernet-1-1
+  namespace: ai-fabric-fe
+spec:
+  description: edge link to b300-05
+  enabled: true
+  encapType: dot1q
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: 2tier-feleaf-01
+  type: interface
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    eda.nokia.com/maas-vnet: 'true'
+    eda.nokia.com/role: edge
+  name: 2tier-feleaf-01-ethernet-1-5
+  namespace: ai-fabric-fe
+spec:
+  description: edge link to b300-05
+  enabled: true
+  encapType: dot1q
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: 2tier-feleaf-01
+  type: interface
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    eda.nokia.com/role: interSwitch
+  name: 2tier-feleaf-01-ethernet-1-31
+  namespace: ai-fabric-fe
+spec:
+  description: interSwitch link to 2tier-fespine-01
+  enabled: true
+  encapType: 'null'
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-31
+      lacpPortPriority: 32768
+      node: 2tier-feleaf-01
+  type: interface
+---
+apiVersion: interfaces.eda.nokia.com/v1alpha1
+kind: Interface
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: 2tier-fespine-01-ethernet-1-31
+  namespace: ai-fabric-fe
+spec:
+  description: edge link to 2tier-juniper
+  enabled: true
+  encapType: 'null'
+  ethernet:
+    fec: rs528
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-31
+      lacpPortPriority: 32768
+      node: 2tier-fespine-01
+  type: interface
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: edge
+  name: 2tier-feleaf-01-e1-1-b300-05-ens16f0np0
+  namespace: ai-fabric-fe
+spec:
+  links:
+    - local:
+        interface: ethernet-1-1
+        interfaceResource: 2tier-feleaf-01-ethernet-1-1
+        node: 2tier-feleaf-01
+      remote:
+        interface: ens16f0np0
+        interfaceResource: b300-05-ens16f0np0
+        node: b300-05
+      type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  labels:
+    eda.nokia.com/role: interSwitch
+  name: 2tier-feleaf-01-e1-31-2tier-fespine-01-e1-1
+  namespace: ai-fabric-fe
+spec:
+  links:
+    - local:
+        interface: ethernet-1-31
+        interfaceResource: 2tier-feleaf-01-ethernet-1-31
+        node: 2tier-feleaf-01
+      remote:
+        interface: ethernet-1-1
+        interfaceResource: 2tier-fespine-01-ethernet-1-1
+        node: 2tier-fespine-01
+      type: interSwitch
+--- 
+apiVersion: fabrics.eda.nokia.com/v1alpha1
+kind: Fabric
+metadata:
+  name: ai-frontend-fabric
+  namespace: ai-fabric-fe
+spec:
+  interSwitchLinks:
+    ipMTU: 9200
+    linkSelector:
+      - eda.nokia.com/role=interSwitch
+    unnumbered: IPV6
+  leafs:
+    leafNodeSelector:
+      - eda.nokia.com/role=leaf
+  overlayProtocol:
+    protocol: EBGP
+  spines:
+    spineNodeSelector:
+      - eda.nokia.com/role=spine
+  systemPoolIPV4: systemipv4-pool
+  underlayProtocol:
+    bgp:
+      asnPool: asn-pool
+    protocol:
+      - EBGP
+---
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  labels:
+    eda.nokia.com/bootstrap: 'true'
+  name: asn-pool
+  namespace: ai-fabric-fe
+spec:
+  segments:
+    - allocations:
+        - name: ai-frontend-fabric-leaf-2tier-feleaf-01
+          value: 4200000021
+        - name: ai-frontend-fabric-leaf-2tier-feleaf-02
+          value: 4200000022
+        - name: ai-frontend-fabric-spine
+          value: 4200000011
+      size: 100
+      start: 4200000000
+--- 
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  labels:
+    eda.nokia.com/bootstrap: 'true'
+  name: evi-pool
+  namespace: ai-fabric-fe
+spec:
+  segments:
+    - size: 4000
+      start: 500
+--- 
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  labels:
+    eda.nokia.com/bootstrap: 'true'
+  name: tunnel-index-pool
+  namespace: ai-fabric-fe
+spec:
+  segments:
+    - size: 4000
+      start: 500
+--- 
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  labels:
+    eda.nokia.com/bootstrap: 'true'
+  name: vni-pool
+  namespace: ai-fabric-fe
+spec:
+  segments:
+    - size: 4000
+      start: 500
+--- 
+apiVersion: core.eda.nokia.com/v1
+kind: IPAllocationPool
+metadata:
+  labels:
+    eda.nokia.com/bootstrap: 'true'
+  name: systemipv4-pool
+  namespace: ai-fabric-fe
+spec:
+  segments:
+    - allocateBroadcastAddress: true
+      allocateNetworkAddress: true
+      allocations:
+        - name: ai-frontend-fabric-leaf-2tier-feleaf-01
+          value: 10.13.62.21
+        - name: ai-frontend-fabric-leaf-2tier-feleaf-02
+          value: 10.13.62.22
+        - name: ai-frontend-fabric-spine-2tier-fespine-01
+          value: 10.13.62.11
+      subnet: 10.13.62.0/24
+--- 
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: max-path
+  namespace: ai-fabric-fe
+spec:
+  configs:
+    - config: |
+        {
+          "allow-multiple-as": true,
+          "ebgp": {
+            "maximum-paths": 4
+          },
+          "ibgp": {
+            "maximum-paths": 4
+          }
+        }
+      operation: Create
+      path: >-
+        .network-instance{.name=="default"}.protocols.bgp.afi-safi{.afi-safi-name=="ipv6-unicast"}.multipath
+    - config: |
+        {
+          "allow-multiple-as": true,
+          "ebgp": {
+            "maximum-paths": 4
+          },
+          "ibgp": {
+            "maximum-paths": 4
+          }
+        }
+      operation: Create
+      path: >-
+        .network-instance{.name=="default"}.protocols.bgp.afi-safi{.afi-safi-name=="ipv4-unicast"}.multipath
+  endpoints:
+    - 2tier-feleaf-01
+    - 2tier-feleaf-02
+  operatingSystem: srl
+  priority: 100
+  version: 25.7.2
+--- 
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: mgmt-route
+  namespace: ai-fabric-fe
+spec:
+  configs:
+    - config: |
+        {
+          "static-routes": {
+            "route": [
+              {
+                "prefix": "0.0.0.0/0",
+                "next-hop-group": "DEFAULT"
+              }
+            ]
+          },
+          "next-hop-groups": {
+            "group": [
+              {
+                "name": "DEFAULT",
+                "nexthop": [
+                  {
+                    "index": 0,
+                    "ip-address": "10.13.20.1"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      operation: Create
+      path: .network-instance{.name=="mgmt"}
+  endpoints:
+    - 2tier-feleaf-01
+    - 2tier-feleaf-02
+    - 2tier-fespine-01
+  operatingSystem: srl
+  priority: 100
+  version: 25.7.2
+--- 
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: syslog-config
+  namespace: ai-fabric-fe
+spec:
+  configs:
+    - config: |-
+        {
+            "logging": {
+                "network-instance": "mgmt",
+                "remote-server": [
+                    {
+                        "host": "172.18.255.3",
+                        "transport": "udp",
+                        "remote-port": 1514,
+                        "facility": [
+                            {
+                                "facility-name": "local6",
+                                "priority": {
+                                    "match-above": "informational"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+      operation: Update
+      path: .system
+  endpointSelector:
+    - eda.nokia.com/role=leaf
+    - eda.nokia.com/role=spine
+  operatingSystem: srl
+  priority: 0
+--- 
+apiVersion: protocols.eda.nokia.com/v1
+kind: DefaultBGPGroup
+metadata:
+  name: bgpgroup-frr-overlay
+  namespace: ai-fabric-fe
+spec:
+  exportPolicy:
+    - export-bgpgroup-frr-overlay
+  importPolicy:
+    - import-bgpgroup-frr-overlay
+  ipv4Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: true
+  multiHopMaxHop: 2
+--- 
+apiVersion: protocols.eda.nokia.com/v1
+kind: DefaultBGPGroup
+metadata:
+  name: bgpgroup-frr-underlay
+  namespace: ai-fabric-fe
+spec:
+  exportPolicy:
+    - export-bgpgroup-frr-underlay
+  importPolicy:
+    - import-bgpgroup-frr-underlay
+  ipv4Unicast:
+    advertiseIPV6NextHops: true
+    enabled: true
+    receiveIPV6NextHops: true
+  ipv6Unicast:
+    enabled: true
+--- 
+apiVersion: protocols.eda.nokia.com/v1
+kind: DefaultBGPGroup
+metadata:
+  name: bgpgroup-juniper-overlay
+  namespace: ai-fabric-fe
+spec:
+  exportPolicy:
+    - export-bgpgroup-juniper-overlay
+  importPolicy:
+    - import-bgpgroup-juniper-overlay
+  ipv4Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: true
+  multiHopMaxHop: 2
+--- 
+apiVersion: protocols.eda.nokia.com/v1
+kind: DefaultBGPGroup
+metadata:
+  name: bgpgroup-juniper-underlay
+  namespace: ai-fabric-fe
+spec:
+  exportPolicy:
+    - export-bgpgroup-juniper-underlay
+  importPolicy:
+    - import-bgpgroup-juniper-underlay
+  ipv4Unicast:
+    advertiseIPV6NextHops: true
+    enabled: true
+    receiveIPV6NextHops: true
+  ipv6Unicast:
+    enabled: true
+--- 
+apiVersion: protocols.eda.nokia.com/v1
+kind: DefaultBGPPeer
+metadata:
+  name: isl-unnumbered-ipv6-2tier-feleaf-01-ethernet-1-5-b300-05-ens6f1np1
+  namespace: ai-fabric-fe
+spec:
+  dynamicNeighbor: true
+  dynamicNeighborAllowedPeerAS:
+    - 4200000031
+  group: bgpgroup-frr-underlay
+  interface: interface-2tier-feleaf-01-ethernet-1-5
+  interfaceKind: DEFAULTINTERFACE
+  ipv6Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: false
+  peerInterface: interface-2tier-feleaf-01-ethernet-1-5
+--- 
+apiVersion: protocols.eda.nokia.com/v1
+kind: DefaultBGPPeer
+metadata:
+  name: leaf1-gpu-svr-01-overlay
+  namespace: ai-fabric-fe
+spec:
+  dynamicNeighbor: false
+  group: bgpgroup-frr-overlay
+  interface: 2tier-feleaf-01-system0
+  interfaceKind: SYSTEMINTERFACE
+  ipv6Unicast:
+    enabled: false
+  peerAS:
+    autonomousSystem: 4200000031
+  peerIP: 10.13.62.31
+--- 
+apiVersion: protocols.eda.nokia.com/v1
+kind: DefaultBGPPeer
+metadata:
+  name: spine1-juniper-overlay
+  namespace: ai-fabric-fe
+spec:
+  dynamicNeighbor: false
+  group: bgpgroup-juniper-overlay
+  interface: 2tier-fespine-01-system0
+  interfaceKind: SYSTEMINTERFACE
+  ipv6Unicast:
+    enabled: false
+  peerAS:
+    autonomousSystem: 4200033100
+  peerIP: 10.13.10.52
+--- 
+apiVersion: routing.eda.nokia.com/v1alpha1
+kind: DefaultInterface
+metadata:
+  name: interface-2tier-feleaf-01-ethernet-1-5
+  namespace: ai-fabric-fe
+spec:
+  defaultRouter: router-2tier-feleaf-01
+  interface: 2tier-feleaf-01-ethernet-1-5
+  ipMTU: 9200
+  unnumbered: IPV6
+  vlanID: 1
+--- 
+apiVersion: routing.eda.nokia.com/v1alpha1
+kind: DefaultInterface
+metadata:
+  name: interface-2tier-fespine-01-ethernet-1-31
+  namespace: ai-fabric-fe
+spec:
+  defaultRouter: router-2tier-fespine-01
+  interface: 2tier-fespine-01-ethernet-1-31
+  ipMTU: 9200
+  unnumbered: IPV6
+--- 
+apiVersion: services.eda.nokia.com/v1
+kind: VirtualNetwork
+metadata:
+  name: vnet-test
+  namespace: ai-fabric-fe
+spec:
+  bridgeDomains:
+    - name: maas-vnet
+      spec:
+        evi: 10200
+        eviPool: evi-pool
+        exportTarget: target:4200030000:10200
+        importTarget: target:4200030000:10200
+        macAging: 300
+        macDuplicationDetection:
+          action: StopLearning
+          enabled: true
+          holdDownTime: 9
+          monitoringWindow: 3
+          numMoves: 5
+        macLearning: true
+        macLimit: 8192
+        tunnelIndexPool: tunnel-index-pool
+        type: EVPNVXLAN
+        vni: 10200
+        vniPool: vni-pool
+  vlans:
+    - name: vnet-vlan-0
+      spec:
+        bridgeDomain: maas-vnet
+        interfaceSelector:
+          - eda.nokia.com/maas-vnet
+        uplink:
+          uplinkVLANID: pool
+        vlanID: untagged
+
